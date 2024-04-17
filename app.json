@@ -1,0 +1,62 @@
+
+{
+  "name": "UxB Terabox bot",
+  "description": "UxB Terabox bot download terabox video and it can access by special chnanel or pm bot",
+  "keywords": [
+    "telegram",
+    "terabox",
+    "downloader"
+  ],
+  "repository": "https://github.com/sahildesai07/Terabox-Downloader-Bot",
+  "logo": "https://ibb.co/FgPVtzw",
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Your Bot token, Get it from @Botfather",
+      "value": ""
+    },
+    "ADMINS": {
+      "description": "An integer of consisting of your owner ID",
+      "value": "1250450587"
+    },
+    "API_ID":{
+      "description": "your app id, take it from my.telegram.org",
+      "value": ""
+    },
+    "HOST": {
+      "description": "Paste your RADIS url ",
+      "value": "url"
+    },
+    "PORT":{
+      "description": "Enter your REDIS PORT ",
+      "value": ""
+    },
+    "API_HASH":{
+      "description": "your api hash, take it from my.telegram.org",
+      "value": ""
+    },
+    "PRIVATE_CHAT_ID":{
+      "description": "make a channel (database channel), then make the bot as admin in channel, and it's id",
+      "value": "-100"
+    },
+    "PASSWORD":{
+      "description": "RADIS PASSWD",
+      "value": "0"
+    },
+    "COOKIE": {
+      "description": "TERABOX PR COOKIE",
+      "value": "False",
+      "required": false
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+}
