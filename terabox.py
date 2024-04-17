@@ -1,11 +1,8 @@
 import re
 from urllib.parse import parse_qs, urlparse
-
 import requests
-
 from config import COOKIE
 from tools import get_formatted_size
-
 
 def check_url_patterns(url):
     patterns = [
@@ -39,15 +36,6 @@ def check_url_patterns(url):
 
 
 def get_urls_from_string(string: str) -> list[str]:
-    """
-    Extracts URLs from a given string.
-
-    Args:
-        string (str): The input string from which to extract URLs.
-
-    Returns:
-        list[str]: A list of URLs extracted from the input string. If no URLs are found, an empty list is returned.
-    """
     pattern = r"(https?://\S+)"
     urls = re.findall(pattern, string)
     urls = [url for url in urls if check_url_patterns(url)]
@@ -57,19 +45,6 @@ def get_urls_from_string(string: str) -> list[str]:
 
 
 def find_between(data: str, first: str, last: str) -> str | None:
-    """
-    Searches for the first occurrence of the `first` string in `data`,
-    and returns the text between the two strings.
-
-    Args:
-        data (str): The input string.
-        first (str): The first string to search for.
-        last (str): The last string to search for.
-
-    Returns:
-        str | None: The text between the two strings, or None if the
-            `first` string was not found in `data`.
-    """
     try:
         start = data.index(first) + len(first)
         end = data.index(last, start)
@@ -79,19 +54,9 @@ def find_between(data: str, first: str, last: str) -> str | None:
 
 
 def extract_surl_from_url(url: str) -> str | None:
-    """
-    Extracts the surl parameter from a given URL.
-
-    Args:
-        url (str): The URL from which to extract the surl parameter.
-
-    Returns:
-        str: The surl parameter, or False if the parameter could not be found.
-    """
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
     surl = query_params.get("surl", [])
-
     if surl:
         return surl[0]
     else:
@@ -158,12 +123,14 @@ def get_data(url: str):
     if not response.status_code == 200:
         return False
     r_j = response.json()
-    if r_j["errno"]:
+    if r_j.get("errno"):
         return False
-    if not "list" in r_j and not r_j["list"]:
+    if "list" not in r_j or not r_j["list"]:
         return False
-
-    response = r.head(r_j["list"][0]["dlink"], headers=headersList)
+    direct_link = r_j["list"][0].get("dlink")
+    if not direct_link:
+        return False
+    response = r.head(direct_link, headers=headersList)
     direct_link = response.headers.get("location")
     data = {
         "file_name": r_j["list"][0]["server_filename"],
@@ -174,3 +141,4 @@ def get_data(url: str):
         "sizebytes": int(r_j["list"][0]["size"]),
     }
     return data
+
