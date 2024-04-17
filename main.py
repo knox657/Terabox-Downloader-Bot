@@ -75,7 +75,7 @@ async def start(m: UpdateNewMessage):
     check_if = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
     if not check_if:
         return await m.reply(
-            "Please join @RoldexVerseChats then send me the link again."
+            "Please join @UltroidOfficial_chat then send me the link again."
         )
     await bot(
         ForwardMessagesRequest(
@@ -132,7 +132,7 @@ async def handle_message(m: Message):
     check_if = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
     if not check_if:
         return await m.reply(
-            "Please join @RoldexVerseChats then send me the link again."
+            "Please join @UltroidOfficial_chat then send me the link again."
         )
     is_spam = db.get(m.sender_id)
     if is_spam and m.sender_id not in [6695586027]:
@@ -159,7 +159,7 @@ async def handle_message(m: Message):
                 id=[int(fileid)],
                 to_peer=m.chat.id,
                 drop_author=True,
-                # noforwards=True, #Uncomment it if you dont want to forward the media.
+                noforwards=True, #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -237,9 +237,9 @@ async def handle_message(m: Message):
             caption=f"""
 File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
-Direct Link: [Click Here](https://t.me/teraboxdown_bot?start={uuid})
+Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
-@RoldexVerse
+@Ultroid_Official
 """,
             supports_streaming=True,
             spoiler=True,
@@ -261,7 +261,7 @@ Direct Link: [Click Here](https://t.me/teraboxdown_bot?start={uuid})
             caption=f"""
 File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
-direct_link = f"Direct Link: [Click Here](https://t.me/{bot.username}?start={uuid})"
+Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
 @ultroid_official
 """,
