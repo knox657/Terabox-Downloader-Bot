@@ -22,6 +22,8 @@ from tools import (
     get_urls_from_string,
     is_user_on_chat,
 )
+# Convert dictionary to string
+cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
 
 bot = TelegramClient("tele", API_ID, API_HASH)
 
