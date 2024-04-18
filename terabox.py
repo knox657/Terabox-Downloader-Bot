@@ -7,6 +7,7 @@ from config import COOKIE
 from tools import get_formatted_size
 
 
+
 def check_url_patterns(url):
     patterns = [
         r"ww\.mirrobox\.com",
@@ -76,6 +77,9 @@ def find_between(data: str, first: str, last: str) -> str | None:
         return data[start:end]
     except ValueError:
         return None
+
+# Convert dictionary to string
+cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
 
 
 def extract_surl_from_url(url: str) -> str | None:
