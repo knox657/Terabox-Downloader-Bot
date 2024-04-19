@@ -28,8 +28,3 @@ COOKIE = {
 }
 
 
-# Convert dictionary to string
-# cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
-
-# Now you can use cookie_str in your request
-
