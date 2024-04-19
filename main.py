@@ -20,7 +20,9 @@ from config import (
     PASSWORD,
     PRIVATE_CHAT_ID,
     ADMINS,
+    COOKIE,  # Add this line to import COOKIE
 )
+
 from terabox import get_data
 from tools import (
     convert_seconds,
