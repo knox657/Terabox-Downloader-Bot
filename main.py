@@ -46,7 +46,8 @@ async def start(m: UpdateNewMessage):
 Hello! I am a bot to download videos from terabox.
 Send me the terabox link and I will start downloading it.
 Join @Ultroid_Official For Updates
-[Source Code](https://github.com/sahildesai07/terabox-downloader-bot) """
+Make yr Pvt terabox bot at @ultroidxTeam
+ """
     check_if = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
     if not check_if:
         return await m.reply("Please join @Ultroid_Official then send me the link again.")
