@@ -6,6 +6,14 @@ import requests
 from config import COOKIE
 from tools import get_formatted_size
 
+from urllib.parse import parse_qs
+
+# Convert COOKIE string to dictionary
+COOKIE_DICT = parse_qs(COOKIE)
+
+# Convert dictionary to string
+cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE_DICT.items()])
+
 
 
 def check_url_patterns(url):
@@ -37,6 +45,7 @@ def check_url_patterns(url):
             return True
 
     return False
+
 
 
 def get_urls_from_string(string: str) -> list[str]:
@@ -77,10 +86,6 @@ def find_between(data: str, first: str, last: str) -> str | None:
         return data[start:end]
     except ValueError:
         return None
-
-# Convert dictionary to string
-cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
-
 
 def extract_surl_from_url(url: str) -> str | None:
     """
