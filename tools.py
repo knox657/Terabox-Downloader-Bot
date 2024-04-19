@@ -102,9 +102,11 @@ def parse_rename_command(text: str) -> tuple[str, str]:
     pattern = r"-n\s+(.+)"
     match = re.search(pattern, text)
     if match:
+        print("Matched groups:", match.groups())
         return match.group(1), match.group(2)
     else:
         return None, None
+
 
 def extract_surl_from_url(url: str) -> str:
     """
