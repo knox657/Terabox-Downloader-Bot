@@ -6,13 +6,6 @@ import requests
 from config import COOKIE
 from tools import get_formatted_size
 
-# Your cookie dictionary
-COOKIE_DICT = COOKIE
-
-# Convert dictionary to string
-cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE_DICT.items()])
-
-
 def check_url_patterns(url):
     patterns = [
         r"ww\.mirrobox\.com",
