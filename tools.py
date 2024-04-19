@@ -87,6 +87,22 @@ def get_urls_from_string(string: str) -> str | None:
         return
     return urls[0]
 
+def parse_rename_command(text: str) -> str:
+    """
+    Parse the rename command from the given text.
+
+    Parameters:
+        text (str): The text containing the rename command.
+
+    Returns:
+        str: The filename specified in the rename command, or None if not found.
+    """
+    pattern = r"-n\s+(.+)"
+    match = re.search(pattern, text)
+    if match:
+        return match.group(1)
+    else:
+        return None
 
 def extract_surl_from_url(url: str) -> str:
     """
