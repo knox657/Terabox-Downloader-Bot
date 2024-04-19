@@ -43,20 +43,26 @@ db = redis.Redis(
 )
 async def start(m: UpdateNewMessage):
     reply_text = f"""
-Hello! I am a bot to download videos from terabox.
-Send me the terabox link and I will start downloading it.
-Join @Ultroid_Official For Updates
-Make yr Pvt terabox bot at @ultroidxTeam
- """
-    check_if = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
-    if not check_if:
-        return await m.reply("Please join @Ultroid_Official then send me the link again.")
-    check_if = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
-    if not check_if:
-        return await m.reply(
-            "Please join @UltroidOfficial_chat then send me the link again."
-        )
+🤖 **Hello! I am your Terabox Downloader Bot** 🤖
+
+📥 **Send me the Terabox link and I will start downloading it for you.** 📥
+
+🔗 **Join [Ultroid Official](https://t.me/Ultroid_Official) for Updates** 🔗
+
+🤖 **Make Your Own Private Terabox Bot at [UltroidxTeam](https://t.me/ultroidxTeam)** 🤖
+"""
+    check_if_ultroid_official = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
+    if not check_if_ultroid_official:
+        await m.reply("Please join @Ultroid_Official then send me the link again.")
+        return
+
+    check_if_ultroid_official_chat = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
+    if not check_if_ultroid_official_chat:
+        await m.reply("Please join @UltroidOfficial_chat then send me the link again.")
+        return
+
     await m.reply(reply_text, link_preview=False, parse_mode="markdown")
+
 
 
 @bot.on(
@@ -84,7 +90,7 @@ async def start(m: UpdateNewMessage):
             id=[int(fileid)],
             to_peer=m.chat.id,
             drop_author=True,
-            noforwards=True,  # Uncomment it if you dont want to forward the media. or do urdo
+            # noforwards=True,  # Uncomment it if you dont want to forward the media. or do urdo
             background=True,
             drop_media_captions=False,
             with_my_score=True,
@@ -160,7 +166,7 @@ async def handle_message(m: Message):
                 id=[int(fileid)],
                 to_peer=m.chat.id,
                 drop_author=True,
-                noforwards=True, #Uncomment it if you dont want to forward the media.
+                # noforwards=True, #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -264,7 +270,7 @@ File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
 Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
-@ultroid_official
+Share : @ultroid_official
 """,
             progress_callback=progress_bar,
             thumb=thumbnail if thumbnail else None,
@@ -301,7 +307,7 @@ Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
                 to_peer=m.chat.id,
                 top_msg_id=m.id,
                 drop_author=True,
-                noforwards=True,  #Uncomment it if you dont want to forward the media.
+                # noforwards=True,  #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
