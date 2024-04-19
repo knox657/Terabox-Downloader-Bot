@@ -11,18 +11,7 @@ from telethon.tl.functions.messages import ForwardMessagesRequest
 from telethon.types import Message, UpdateNewMessage
 
 from cansend import CanSend
-from config import (
-    API_ID,
-    API_HASH,
-    BOT_TOKEN,
-    HOST,
-    PORT,
-    PASSWORD,
-    PRIVATE_CHAT_ID,
-    ADMINS,
-    COOKIE,  # Add this line to import COOKIE
-)
-
+from config import *
 from terabox import get_data
 from tools import (
     convert_seconds,
@@ -33,8 +22,6 @@ from tools import (
     get_urls_from_string,
     is_user_on_chat,
 )
-# Convert dictionary to string
-cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
 
 bot = TelegramClient("tele", API_ID, API_HASH)
 
