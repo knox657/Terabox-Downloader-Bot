@@ -30,23 +30,8 @@ COOKIE = {
 }
 '''
 
-COOKIE = {
-    'csrfToken': 'LDN0ANn5_bto0e7G6chiHH-l',
-    'browserid': 'OWn399n7wySTYL4cWD6IKCRgKBPiyPH4pZs14allfxguaQPpNgeIPEvoGiE=',
-    'lang': 'en',
-    'TSID': '26pD7uSTkIKvE0tMhXZLld63rZqqWOZP',
-    '__bid_n': '18eef166c5bf0afa4f4207',
-    '_ga': 'GA1.1.1976523547.1713408213',
-    'g_state': '{"i_l":0}',
-    'ndus': 'YdxLPh4teHui-Nin63w7IuVqJXUjML1vazoLj4az',
-    '_ga_06ZNKL8C2E': 'GS1.1.1713408213.1.1.1713408416.60.0.0',
-    'ndut_fmt': 'A1C2793AAC69CB74A69F6BC4E1E13382F5BC5AC055C8DD72959FB5A87204616A',
-    'ab_sr': '1.0.1_NGRjYjI1YTVmY2MyNDY3MGRiMDhiMGI2NWNjNzc2MGU3MWIyZGU3MWU5MzYxNTQ4YTA3YTljNjgwZmUzY2E2MDY1MTE1MjQxNDRkMWMwZjAyZmE5MTA4Mzg1ODgxZGJhYmU5M2ZkNWI0Mzk0ZWFkNzIzM2UzMWNkYmJkM2I2ZjFhYTFmZDUzYmM5ZTRjZDQ1Nzk4MWFhNGY5ZWM4MWMwNA==',
-    'ab_ymg_result': '{"data":"8b0482c84aac99214162666d7e1afaa018cdb0ddba8c8ce7aea713a428b4b32bdac3a211c80a9a1011cfb1f83b4959c57b2eac860ecb4417fbfdfbd792f7f1c72b44a748e1c72f01f2455c023d9db54c5dd681844d24c1b303165a3a233aaa4c331951ecd752dd09eac8265d8a8eac18d492a150838b36b425b2c2b7306d1783","key_id":"66","sign":"45191a6c"}'
-}
-
 # Convert dictionary to string
-cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
+# cookie_str = '; '.join([f"{key}={value}" for key, value in COOKIE.items()])
 
 # Now you can use cookie_str in your request
 
