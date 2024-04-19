@@ -11,7 +11,16 @@ from telethon.tl.functions.messages import ForwardMessagesRequest
 from telethon.types import Message, UpdateNewMessage
 
 from cansend import CanSend
-from config import *
+from config import (
+    API_ID,
+    API_HASH,
+    BOT_TOKEN,
+    HOST,
+    PORT,
+    PASSWORD,
+    PRIVATE_CHAT_ID,
+    ADMINS,
+)
 from terabox import get_data
 from tools import (
     convert_seconds,
