@@ -115,8 +115,6 @@ async def remove(m: UpdateNewMessage):
         await m.reply(f"{user_id} is not in the list.")
 
 
-from tools import parse_rename_command
-
 @bot.on(
     events.NewMessage(
         incoming=True,
@@ -127,49 +125,34 @@ from tools import parse_rename_command
     )
 )
 async def get_message(m: Message):
-    text = m.text.strip()
-    # Check if the message includes a command to rename the file
-    rename_command, new_file_name = parse_rename_command(text)
-    if rename_command and new_file_name:
-        # If the rename command is provided with a new file name, handle the message with the new file name
-        asyncio.create_task(handle_message(m, new_file_name))
-    else:
-        # Otherwise, handle the message without renaming the file
-        asyncio.create_task(handle_message(m))
+    asyncio.create_task(handle_message(m))
 
 
-async def handle_message(m: Message, file_name_override=None):
+async def handle_message(m: Message):
 
     url = get_urls_from_string(m.text)
     if not url:
-        return await m.reply("Please enter a valid URL.")
-
-    # Check if the user is a member of the required channels
-    check_if_ultroid_official = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
-    if not check_if_ultroid_official:
+        return await m.reply("Please enter a valid url.")
+    check_if = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
+    if not check_if:
         return await m.reply("Please join @Ultroid_Official then send me the link again.")
-
-    check_if_ultroid_official_chat = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
-    if not check_if_ultroid_official_chat:
-        return await m.reply("Please join @UltroidOfficial_chat then send me the link again.")
-
-    # Check for spamming
+    check_if = await is_user_on_chat(bot, "@UltroidOfficial_chat", m.peer_id)
+    if not check_if:
+        return await m.reply(
+            "Please join @UltroidOfficial_chat then send me the link again."
+        )
     is_spam = db.get(m.sender_id)
     if is_spam and m.sender_id not in [6695586027]:
-        return await m.reply("You are spamming. Please wait a minute and try again.")
-
-    # Check the limit
-    hm = await m.reply("Sending you the media, please wait...")
+        return await m.reply("You are spamming. Please wait a 1 minute and try again.")
+    hm = await m.reply("Sending you the media wait...")
     count = db.get(f"check_{m.sender_id}")
     if count and int(count) > 5:
-        return await hm.edit("You are currently limited. Please come back after 2 hours or use another account.")
-
-    # Extract the short URL from the Terabox link
+        return await hm.edit(
+            "You are limited now. Please come back after 2 hours or use another account."
+        )
     shorturl = extract_code_from_url(url)
     if not shorturl:
-        return await hm.edit("It seems like your link is invalid.")
-
-    # Retrieve the file ID from the database if it exists
+        return await hm.edit("Seems like your link is invalid.")
     fileid = db.get(shorturl)
     if fileid:
         try:
@@ -183,7 +166,7 @@ async def handle_message(m: Message, file_name_override=None):
                 id=[int(fileid)],
                 to_peer=m.chat.id,
                 drop_author=True,
-                # noforwards=True, # Uncomment it if you dont want to forward the media.
+                # noforwards=True, #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -195,27 +178,27 @@ async def handle_message(m: Message, file_name_override=None):
             int(count) + 1 if count else 1,
             ex=7200,
         )
+
         return
 
-    # Get data from the Terabox link
     data = get_data(url)
     if not data:
-        return await hm.edit("Sorry! The API is not accessible or your link is broken.")
-
-    # Check file extension and size
-    if not data["file_name"].endswith((".mp4", ".mkv", ".Mkv", ".webm")):
+        return await hm.edit("Sorry! API is dead or maybe your link is broken.")
+    db.set(m.sender_id, time.monotonic(), ex=60)
+    if (
+        not data["file_name"].endswith(".mp4")
+        and not data["file_name"].endswith(".mkv")
+        and not data["file_name"].endswith(".Mkv")
+        and not data["file_name"].endswith(".webm")
+    ):
         return await hm.edit(
-            f"Sorry! This file format is not supported. I can only download .mp4, .mkv, and .webm files."
+            f"Sorry! File is not supported for now. I can download only .mp4, .mkv and .webm files."
         )
     if int(data["sizebytes"]) > 524288000 and m.sender_id not in [6695586027]:
         return await hm.edit(
-            f"Sorry! This file is too large. I can only download files up to 500MB, but this file is {data['size']}."
+            f"Sorry! File is too big. I can download only 500MB and this file is of {data['size']} ."
         )
 
-    # Customize the file name if provided
-    file_name = file_name_override if file_name_override else data["file_name"]
-
-    # Start downloading
     start_time = time.time()
     cansend = CanSend()
 
@@ -230,7 +213,7 @@ async def handle_message(m: Message, file_name_override=None):
 
         elapsed_time = time.time() - start_time
 
-        head_text = f"{state} `{file_name}`"
+        head_text = f"{state} `{data['file_name']}`"
         progress_bar = f"[{arrow + spaces}] {percent:.2%}"
         upload_speed = current_downloaded / elapsed_time if elapsed_time > 0 else 0
         speed_line = f"Speed: **{get_formatted_size(upload_speed)}/s**"
@@ -259,7 +242,7 @@ async def handle_message(m: Message, file_name_override=None):
             thumb=thumbnail if thumbnail else None,
             progress_callback=progress_bar,
             caption=f"""
-File Name: `{file_name}`
+File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
 Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
@@ -268,9 +251,11 @@ Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
             supports_streaming=True,
             spoiler=True,
         )
+
+        # pm2 start python3 --name "terabox" -- main.py
     except telethon.errors.rpcerrorlist.WebpageCurlFailedError:
         download = await download_file(
-            data["direct_link"], file_name, progress_bar
+            data["direct_link"], data["file_name"], progress_bar
         )
         if not download:
             return await hm.edit(
@@ -281,7 +266,7 @@ Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
             PRIVATE_CHAT_ID,
             download,
             caption=f"""
-File Name: `{file_name}`
+File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
 Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
@@ -301,7 +286,10 @@ Share : @ultroid_official
             f"Sorry! Download Failed but you can download it from [here]({data['direct_link']}).",
             parse_mode="markdown",
         )
-
+    try:
+        os.unlink(download)
+    except Exception as e:
+        pass
     try:
         await hm.delete()
     except Exception as e:
@@ -319,7 +307,7 @@ Share : @ultroid_official
                 to_peer=m.chat.id,
                 top_msg_id=m.id,
                 drop_author=True,
-                # noforwards=True,  # Uncomment it if you dont want to forward the media.
+                # noforwards=True,  #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -331,5 +319,7 @@ Share : @ultroid_official
             int(count) + 1 if count else 1,
             ex=7200,
         )
+
+
 bot.start(bot_token=BOT_TOKEN)
 bot.run_until_disconnected()
