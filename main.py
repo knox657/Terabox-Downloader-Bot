@@ -2,7 +2,7 @@ import asyncio
 import os
 import time
 from uuid import uuid4
-
+import json
 import redis
 import telethon
 import telethon.tl.types
@@ -33,7 +33,6 @@ db = redis.Redis(
 )
 
 
-
 @bot.on(
     events.NewMessage(
         pattern="/start$",
@@ -46,8 +45,10 @@ async def start(m: UpdateNewMessage):
     user_id = m.sender_id
     # Check if the user is already in the database
     if not db.exists(f"user:{user_id}"):
+        # Serialize user details into a JSON string
+        user_details = json.dumps({"username": m.sender.username, "first_name": m.sender.first_name, "last_name": m.sender.last_name})
         # Add user details to the database
-        db.set(f"user:{user_id}", {"username": m.sender.username, "first_name": m.sender.first_name, "last_name": m.sender.last_name})
+        db.set(f"user:{user_id}", user_details)
     
     reply_text = f"""
 🤖 **Hello! I am your Terabox Downloader Bot** 🤖
