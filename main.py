@@ -330,35 +330,41 @@ Share : @ultroid_official
         )
 
 
-# Broadcast command handler
 @bot.on(
     events.NewMessage(
-        pattern="/broadcast",
+        pattern="/broadcast (.+)",
         incoming=True,
         outgoing=False,
-        from_users=ADMINS,
+        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
     )
 )
 async def broadcast_message(m: UpdateNewMessage):
-    # Fetch all user details from the database
-    users = db.keys("user:*")
-    for user_key in users:
+    message = m.pattern_match.group(1)
+    # Retrieve all users from the database
+    all_users = db.keys("user:*")
+    for user_key in all_users:
         user_id = user_key.split(":")[-1]
-        message = m.reply_to_message.text
-        await bot.send_message(user_id, message)
+        try:
+            # Send the broadcast message to each user
+            await bot.send_message(int(user_id), message)
+        except Exception as e:
+            print(f"Failed to send message to user {user_id}: {str(e)}")
+    await m.reply("Broadcast sent successfully!")
 
-# Total user count command handler
 @bot.on(
     events.NewMessage(
         pattern="/total_users",
         incoming=True,
         outgoing=False,
-        from_users=ADMINS,
+        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
     )
 )
-async def total_users_count(m: UpdateNewMessage):
-    users_count = db.scard("users")
-    await m.reply(f"Total users in the bot: {users_count}")
+async def total_users(m: UpdateNewMessage):
+    # Retrieve all users from the database
+    all_users = db.keys("user:*")
+    total_users_count = len(all_users)
+    await m.reply(f"Total number of users: {total_users_count}")
+
 
 bot.start(bot_token=BOT_TOKEN)
 bot.run_until_disconnected()
