@@ -33,6 +33,7 @@ db = redis.Redis(
 )
 
 
+
 @bot.on(
     events.NewMessage(
         pattern="/start$",
@@ -42,6 +43,12 @@ db = redis.Redis(
     )
 )
 async def start(m: UpdateNewMessage):
+    user_id = m.sender_id
+    # Check if the user is already in the database
+    if not db.exists(f"user:{user_id}"):
+        # Add user details to the database
+        db.set(f"user:{user_id}", {"username": m.sender.username, "first_name": m.sender.first_name, "last_name": m.sender.last_name})
+    
     reply_text = f"""
 🤖 **Hello! I am your Terabox Downloader Bot** 🤖
 
@@ -62,6 +69,7 @@ async def start(m: UpdateNewMessage):
         return
 
     await m.reply(reply_text, link_preview=False, parse_mode="markdown")
+
 
 
 
@@ -320,6 +328,36 @@ Share : @ultroid_official
             ex=7200,
         )
 
+
+# Broadcast command handler
+@bot.on(
+    events.NewMessage(
+        pattern="/broadcast",
+        incoming=True,
+        outgoing=False,
+        from_users=ADMINS,
+    )
+)
+async def broadcast_message(m: UpdateNewMessage):
+    # Fetch all user details from the database
+    users = db.keys("user:*")
+    for user_key in users:
+        user_id = user_key.split(":")[-1]
+        message = m.reply_to_message.text
+        await bot.send_message(user_id, message)
+
+# Total user count command handler
+@bot.on(
+    events.NewMessage(
+        pattern="/total_users",
+        incoming=True,
+        outgoing=False,
+        from_users=ADMINS,
+    )
+)
+async def total_users_count(m: UpdateNewMessage):
+    users_count = db.scard("users")
+    await m.reply(f"Total users in the bot: {users_count}")
 
 bot.start(bot_token=BOT_TOKEN)
 bot.run_until_disconnected()
