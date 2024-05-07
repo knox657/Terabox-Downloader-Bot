@@ -1,9 +1,9 @@
 import os
 
 API_ID = 27875635  # api id
-API_HASH = f16e61ac56b71ce12aed2e1ae8dee89b
+API_HASH = "f16e61ac56b71ce12aed2e1ae8dee89b"
 
-BOT_TOKEN = 6794840797:AAFeoIJxZ4pILUCswCO-Kq4vZsfMdL2jLmk
+BOT_TOKEN = "6794840797:AAFeoIJxZ4pILUCswCO-Kq4vZsfMdL2jLmk"
 
 
 ## REDIS
