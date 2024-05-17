@@ -9,3 +9,6 @@ hachoir
 requests
 redis
 pymongo
+asyncio
+motor
+
