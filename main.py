@@ -28,6 +28,7 @@ from tools import (
 import motor.motor_asyncio
 from config import DB_URI, DB_NAME
 
+ADMINS = [6695586027, 6020516635]
 dbclient = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
 database = dbclient[DB_NAME]
 user_data = database['users']
