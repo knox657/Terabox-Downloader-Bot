@@ -99,6 +99,32 @@ async def update_verify_status(user_id, verify_token="", is_verified=False, veri
     current['verified_time'] = verified_time
     current['link'] = link
     await db_update_verify_status(user_id, current)
+    
+'''
+async def update_verify_status(user_id, is_verified):
+    # Assume database interaction here
+    # Update the user's record with the new verification status
+    await database.update_one({'_id': user_id}, {'$set': {'is_verified': is_verified}}) '''
+
+async def verify_token(token, user_id):
+    # Check if the token exists in the database and is associated with the user
+    user_data = await db.get_user_data(user_id)
+    if user_data and user_data.get("verify_token") == token:
+        # Update verification status in the database
+        await db.update_verify_status(user_id, is_verified=True)
+        return True
+    return False
+
+@bot.on(events.NewMessage(pattern="start=verify_[a-zA-Z0-9]+", incoming=True, outgoing=False, func=lambda x: x.is_private))
+async def handle_verification_link(m):
+    user_id = m.sender_id
+    token = m.text.split("start=verify_")[1]
+    is_valid = await verify_token(token, user_id)
+    if is_valid:
+        await m.reply("Your token has been verified successfully. You can now proceed.")
+    else:
+        await m.reply("Invalid token. Please try again or contact support.")
+
 
 async def get_shortlink(url, api, link):
     shortzy = Shortzy(api_key=api, base_site=url)
