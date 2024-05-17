@@ -123,6 +123,7 @@ def get_readable_time(seconds: int) -> str:
     time_list.reverse()
     up_time += ":".join(time_list)
     return up_time
+
 bot = TelegramClient("tele", API_ID, API_HASH)
 
 db = redis.Redis(
@@ -206,6 +207,83 @@ async def start_with_token(m: UpdateNewMessage):
         return await m.reply("Please join @UltroidOfficial_chat then send me the link again.")
 
     await bot(ForwardMessagesRequest(from_peer=PRIVATE_CHAT_ID, id=[int(fileid)], to_peer=m.chat.id, drop_author=True, background=True, drop_media_captions=False, with_my_score=True))
+@bot.on(events.NewMessage(pattern=r"/verify_(.*)", incoming=True, outgoing=False, func=lambda x: x.is_private))
+async def verify(m: UpdateNewMessage):
+    token = m.pattern_match.group(1)
+    user_id = m.sender_id
+
+    verify_status = await get_verify_status(user_id)
+    if verify_status['is_verified']:
+        await m.reply("You are already verified.")
+        return
+
+    if token != verify_status['verify_token']:
+        await m.reply("Invalid verification token.")
+        return
+
+    await update_verify_status(user_id, verify_token="", is_verified=True, verified_time=int(time.time()))
+    await m.reply("You have been successfully verified! You can now start using the bot.")
+
+@bot.on(events.NewMessage(pattern="https://terabox.com/[a-zA-Z0-9]+", incoming=True, outgoing=False, func=lambda x: x.is_private))
+async def handle_terabox_link(m: UpdateNewMessage):
+    user_id = m.sender_id
+    verify_status = await get_verify_status(user_id)
+    
+    if IS_VERIFY and not verify_status['is_verified']:
+        token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        await update_verify_status(user_id, verify_token=token, link="")
+        link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/TeraboxDownloadeRobot?start=verify_{token}')
+        btn = [
+            [Button.url("Click here", url=link)],
+            [Button.url('How to use the bot', url=TUT_VID)]
+        ]
+        await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn, quote=True)
+        return
+
+    link = m.text
+    await m.reply("Processing your Terabox link...")
+
+    try:
+        terabox_data = await get_data(link)
+        filename = terabox_data['filename']
+        filesize = terabox_data['filesize']
+        filelink = terabox_data['filelink']
+        formatted_size = get_formatted_size(filesize)
+
+        reply = f"""
+**Filename:** {filename}
+**Filesize:** {formatted_size}
+
+**Downloading...**
+"""
+        await m.reply(reply)
+        
+        file_path = await download_file(filelink, filename)
+        await bot.send_file(m.sender_id, file_path, caption=f"**{filename}**\n**Size:** {formatted_size}")
+
+    except Exception as e:
+        await m.reply(f"Error: {str(e)}")
+
+@bot.on(events.NewMessage(pattern="/reset", incoming=True, outgoing=False, func=lambda x: x.is_private))
+async def reset(m: UpdateNewMessage):
+    user_id = m.sender_id
+    await update_verify_status(user_id, verify_token="", is_verified=False, verified_time=0, link="")
+    await m.reply("Your verification status has been reset. Please start the verification process again using /start.")
+
+async def rate_limiter(event):
+    user_id = event.sender_id
+    if db.exists(f"ratelimit:{user_id}"):
+        remaining_time = int(db.ttl(f"ratelimit:{user_id}"))
+        await event.reply(f"Rate limit exceeded. Try again in {convert_seconds(remaining_time)}.")
+        return False
+    db.setex(f"ratelimit:{user_id}", RATE_LIMIT, "limited")
+    return True
+
+@bot.on(events.NewMessage(incoming=True, outgoing=False, func=lambda x: x.is_private))
+async def handler(event: UpdateNewMessage):
+    if not await rate_limiter(event):
+        return
+    await event.reply("You can now use the bot. Send your Terabox link.")
 
 @bot.on(events.NewMessage(pattern="/remove (.*)", incoming=True, outgoing=False, func=lambda x: x.is_private))
 async def remove_user(m: UpdateNewMessage):
@@ -513,15 +591,7 @@ async def total_users(m: UpdateNewMessage):
     total_users_count = len(all_users)
     await m.reply(f"Total number of users: {total_users_count}")
 
-bot.start(bot_token=BOT_TOKEN)
-bot.run_until_disconnected()
-
-
-# Start and run the bot
-async def main():
-    await bot.start(bot_token=BOT_TOKEN)
-    print("Bot is running...")
-    await bot.run_until_disconnected()
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    print("Bot is running...")
+    bot.start(bot_token=BOT_TOKEN)
+    bot.run_until_disconnected()
