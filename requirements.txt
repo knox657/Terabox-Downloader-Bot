@@ -8,3 +8,4 @@ pillow
 hachoir
 requests
 redis
+pymongo
