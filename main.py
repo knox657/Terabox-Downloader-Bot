@@ -150,7 +150,7 @@ async def start(m: UpdateNewMessage):
     else:
         token = verify_status['verify_token']
 
-    link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
+    link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/TeraboxDownloaderobot?start=verify_{token}')
     btn = [
         [Button.url("Click here", url=link)],
         [Button.url('How to use the bot', url=TUT_VID)]
