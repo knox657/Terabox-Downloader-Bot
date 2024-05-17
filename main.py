@@ -39,6 +39,8 @@ logger = logging.getLogger(__name__)
 # Configuration for rate limiting (example: 60 seconds)
 RATE_LIMIT = 60
 
+# Define the bot variable here
+bot = TelegramClient("tele", API_ID, API_HASH)
 
 ADMINS = [6695586027, 6020516635]
 dbclient = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
