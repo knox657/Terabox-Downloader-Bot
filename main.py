@@ -297,7 +297,7 @@ async def handle_message(m: UpdateNewMessage):
             with_my_score=True,
         ))
         db.set(m.sender_id, time.monotonic(), ex=60)
-        db.set(f"check_{m.sender_id}",
+        db.set(f"check_{m.sender_id}", int(count) + 1 if count else 1, ex=7200)
         return await hm.edit("You are limited now. Please come back after 2 hours or use another account.")
     
     data = await get_data(url)
