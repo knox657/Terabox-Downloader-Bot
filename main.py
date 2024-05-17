@@ -25,9 +25,16 @@ from tools import (
     get_urls_from_string,
     is_user_on_chat,
 )
+import os
+import logging
+from telethon.errors.rpcerrorlist import FloodWaitError, FilePartsInvalidError
 
 import motor.motor_asyncio
 from config import DB_URI, DB_NAME
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 ADMINS = [6695586027, 6020516635]
 dbclient = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
@@ -261,8 +268,19 @@ async def handle_terabox_link(m: UpdateNewMessage):
         file_path = await download_file(filelink, filename)
         await bot.send_file(m.sender_id, file_path, caption=f"**{filename}**\n**Size:** {formatted_size}")
 
+        # Cleanup the downloaded file
+        os.remove(file_path)
+        logger.info(f"File {filename} sent and deleted from the server.")
+
+    except FilePartsInvalidError as e:
+        logger.error(f"File parts invalid: {str(e)}")
+        await m.reply("Error: The file could not be downloaded properly. Please try again later.")
+    except FloodWaitError as e:
+        logger.warning(f"Flood wait: {str(e)}")
+        await m.reply(f"Bot is being rate limited. Please try again after {e.seconds} seconds.")
     except Exception as e:
-        await m.reply(f"Error: {str(e)}")
+        logger.error(f"Unexpected error: {str(e)}")
+        await m.reply(f"An unexpected error occurred: {str(e)}")
 
 @bot.on(events.NewMessage(pattern="/reset", incoming=True, outgoing=False, func=lambda x: x.is_private))
 async def reset(m: UpdateNewMessage):
