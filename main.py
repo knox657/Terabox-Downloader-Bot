@@ -36,6 +36,10 @@ from config import DB_URI, DB_NAME
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Configuration for rate limiting (example: 60 seconds)
+RATE_LIMIT = 60
+
+
 ADMINS = [6695586027, 6020516635]
 dbclient = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
 database = dbclient[DB_NAME]
