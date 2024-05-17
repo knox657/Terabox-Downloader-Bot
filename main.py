@@ -259,13 +259,13 @@ async def handle_message(m: UpdateNewMessage):
     if not url:
         return await m.reply("Please enter a valid url.")
     
-    check_if = await is_user_on_chat(bot, "@backupbackupbackup", m.sender_id)
+    check_if = await is_user_on_chat(bot, "@ultroid_official", m.sender_id)
     if not check_if:
-        return await m.reply("Please join @backupbackupbackup then send me the link again.")
+        return await m.reply("Please join @ultroid_official then send me the link again.")
     
-    check_if = await is_user_on_chat(bot, "@pompompom_bot_support", m.sender_id)
+    check_if = await is_user_on_chat(bot, "@ultroidofficial_chat", m.sender_id)
     if not check_if:
-        return await m.reply("Please join @pompompom_bot_support then send me the link again.")
+        return await m.reply("Please join @ultroidofficial_chat then send me the link again.")
     
     is_spam = db.get(m.sender_id)
     if is_spam and m.sender_id not in [6695586027]:
@@ -356,9 +356,9 @@ async def handle_message(m: UpdateNewMessage):
             caption=f"""
 File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
-Direct Link: [Click Here](https://t.me/pom_pom_pom_terabox_bot?start={uuid})
+Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
-@backupbackupbackup
+@ultroid_official
 """,
             supports_streaming=True,
             spoiler=True,
@@ -378,9 +378,9 @@ Direct Link: [Click Here](https://t.me/pom_pom_pom_terabox_bot?start={uuid})
             caption=f"""
 File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
-Direct Link: [Click Here](https://t.me/pom_pom_pom_terabox_bot?start={uuid})
+Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
-Share : @backupbackupbackup
+Share : @ultroid_official
 """,
             progress_callback=progress_bar,
             thumb=thumbnail if thumbnail else None,
