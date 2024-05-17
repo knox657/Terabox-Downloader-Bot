@@ -1,7 +1,7 @@
 import asyncio
 import os
 import time
-import Shortzy
+from shortzy import Shortzy
 import random
 import string
 from uuid import uuid4
