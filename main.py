@@ -32,6 +32,13 @@ db = redis.Redis(
     decode_responses=True,
 )
 
+def generate_token():
+    token = str(uuid4())
+    db.setex(f"token:{token}", 3600, "valid")  # Token expires in 1 hour
+    return token
+
+def verify_token(token):
+    return db.exists(f"token:{token}")
 
 @bot.on(
     events.NewMessage(
@@ -50,6 +57,7 @@ async def start(m: UpdateNewMessage):
         # Add user details to the database
         db.set(f"user:{user_id}", user_details)
     
+    token = generate_token()
     reply_text = f"""
 🤖 **Hello! I am your Terabox Downloader Bot** 🤖
 
@@ -58,7 +66,10 @@ async def start(m: UpdateNewMessage):
 🔗 **Join [Ultroid Official](https://t.me/Ultroid_Official) for Updates** 🔗
 
 🤖 **Make Your Own Private Terabox Bot at [UltroidxTeam](https://t.me/ultroidxTeam)** 🤖
+
+🔑 **Your verification token is: {token}**
 """
+
     check_if_ultroid_official = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
     if not check_if_ultroid_official:
         await m.reply("Please join @Ultroid_Official then send me the link again.")
@@ -71,9 +82,6 @@ async def start(m: UpdateNewMessage):
 
     await m.reply(reply_text, link_preview=False, parse_mode="markdown")
 
-
-
-
 @bot.on(
     events.NewMessage(
         pattern="/start (.*)",
@@ -82,8 +90,12 @@ async def start(m: UpdateNewMessage):
         func=lambda x: x.is_private,
     )
 )
-async def start(m: UpdateNewMessage):
+async def start_with_token(m: UpdateNewMessage):
     text = m.pattern_match.group(1)
+    if not verify_token(text):
+        await m.reply("Invalid or expired token. Please start again to get a new token.")
+        return
+
     fileid = db.get(str(text))
     check_if = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
     if not check_if:
@@ -99,13 +111,11 @@ async def start(m: UpdateNewMessage):
             id=[int(fileid)],
             to_peer=m.chat.id,
             drop_author=True,
-            # noforwards=True,  # Uncomment it if you dont want to forward the media. or do urdo
             background=True,
             drop_media_captions=False,
             with_my_score=True,
         )
     )
-
 
 @bot.on(
     events.NewMessage(
@@ -123,7 +133,6 @@ async def remove(m: UpdateNewMessage):
     else:
         await m.reply(f"{user_id} is not in the list.")
 
-
 @bot.on(
     events.NewMessage(
         incoming=True,
@@ -136,9 +145,7 @@ async def remove(m: UpdateNewMessage):
 async def get_message(m: Message):
     asyncio.create_task(handle_message(m))
 
-
 async def handle_message(m: Message):
-
     url = get_urls_from_string(m.text)
     if not url:
         return await m.reply("Please enter a valid url.")
@@ -175,7 +182,6 @@ async def handle_message(m: Message):
                 id=[int(fileid)],
                 to_peer=m.chat.id,
                 drop_author=True,
-                # noforwards=True, #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -212,7 +218,6 @@ async def handle_message(m: Message):
     cansend = CanSend()
 
     async def progress_bar(current_downloaded, total_downloaded, state="Sending"):
-
         if not cansend.can_send():
             return
         bar_length = 20
@@ -260,8 +265,6 @@ Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
             supports_streaming=True,
             spoiler=True,
         )
-
-        # pm2 start python3 --name "terabox" -- main.py
     except telethon.errors.rpcerrorlist.WebpageCurlFailedError:
         download = await download_file(
             data["direct_link"], data["file_name"], progress_bar
@@ -279,7 +282,7 @@ File Name: `{data['file_name']}`
 Size: **{data["size"]}** 
 Direct Link: [Click Here](https://t.me/TeraboxDownloadeRobot?start={uuid})
 
-Share : @ultroid_official
+Share: @ultroid_official
 """,
             progress_callback=progress_bar,
             thumb=thumbnail if thumbnail else None,
@@ -290,7 +293,7 @@ Share : @ultroid_official
             os.unlink(download)
         except Exception as e:
             print(e)
-    except Exception:
+    except Exception as e:
         return await hm.edit(
             f"Sorry! Download Failed but you can download it from [here]({data['direct_link']}).",
             parse_mode="markdown",
@@ -316,7 +319,6 @@ Share : @ultroid_official
                 to_peer=m.chat.id,
                 top_msg_id=m.id,
                 drop_author=True,
-                # noforwards=True,  #Uncomment it if you dont want to forward the media.
                 background=True,
                 drop_media_captions=False,
                 with_my_score=True,
@@ -329,23 +331,20 @@ Share : @ultroid_official
             ex=7200,
         )
 
-
 @bot.on(
     events.NewMessage(
         pattern="/broadcast (.+)",
         incoming=True,
         outgoing=False,
-        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
+        from_users=ADMINS,
     )
 )
 async def broadcast_message(m: UpdateNewMessage):
     message = m.pattern_match.group(1)
-    # Retrieve all users from the database
     all_users = db.keys("user:*")
     for user_key in all_users:
         user_id = user_key.split(":")[-1]
         try:
-            # Send the broadcast message to each user
             await bot.send_message(int(user_id), message)
         except Exception as e:
             print(f"Failed to send message to user {user_id}: {str(e)}")
@@ -356,15 +355,14 @@ async def broadcast_message(m: UpdateNewMessage):
         pattern="/total_users",
         incoming=True,
         outgoing=False,
-        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
+        from_users=ADMINS,
     )
 )
 async def total_users(m: UpdateNewMessage):
-    # Retrieve all users from the database
     all_users = db.keys("user:*")
     total_users_count = len(all_users)
     await m.reply(f"Total number of users: {total_users_count}")
 
-
 bot.start(bot_token=BOT_TOKEN)
 bot.run_until_disconnected()
+
