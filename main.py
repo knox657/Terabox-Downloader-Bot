@@ -37,10 +37,17 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Configuration for rate limiting (example: 60 seconds)
-RATE_LIMIT = 60
+RATE_LIMIT = 20
 
 # Define the bot variable here
 bot = TelegramClient("tele", API_ID, API_HASH)
+
+db = redis.Redis(
+    host=HOST,
+    port=PORT,
+    password=PASSWORD,
+    decode_responses=True,
+)
 
 ADMINS = [6695586027, 6020516635]
 dbclient = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
@@ -163,14 +170,7 @@ def get_readable_time(seconds: int) -> str:
     up_time += ":".join(time_list)
     return up_time
 
-bot = TelegramClient("tele", API_ID, API_HASH)
 
-db = redis.Redis(
-    host=HOST,
-    port=PORT,
-    password=PASSWORD,
-    decode_responses=True,
-)
 
 @bot.on(events.NewMessage(pattern="/start$", incoming=True, outgoing=False, func=lambda x: x.is_private))
 async def start(m: UpdateNewMessage):
