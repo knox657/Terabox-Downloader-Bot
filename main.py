@@ -168,7 +168,7 @@ async def start(m: UpdateNewMessage):
         [Button.url("Click here", url=link)],
         [Button.url('How to use the bot', url=TUT_VID)]
     ]
-    #await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn, quote=True)
+    #await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
     await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
 
     reply_text = """
@@ -207,7 +207,7 @@ async def start_with_token(m: UpdateNewMessage):
             [Button.url('How to use the bot', url=TUT_VID)]
         ]
        # await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad,
-        return await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn, protect_content=False, quote=True)
+        return await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
         return
 
     check_if = await is_user_on_chat(bot, "@Ultroid_Official", m.peer_id)
@@ -248,7 +248,7 @@ async def handle_terabox_link(m: UpdateNewMessage):
             [Button.url("Click here", url=link)],
             [Button.url('How to use the bot', url=TUT_VID)]
         ]
-        await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn, quote=True)
+        await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
         return
 
     link = m.text
@@ -374,7 +374,7 @@ async def handle_message(m: UpdateNewMessage):
                 [Button.url("Click here", url=link)],
                 [Button.url('How to use the bot', url=TUT_VID)]
             ]
-            #await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn, protect_content=False, quote=True)
+            #await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
             await m.reply(f"Your Ads token is expired, refresh your token and try again.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.", buttons=btn)
             return
 
