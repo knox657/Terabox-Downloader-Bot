@@ -162,7 +162,7 @@ async def remove_user(m: UpdateNewMessage):
     user_id = m.sender_id
     text = m.pattern_match.group(1)
 
-    if user_id not in ADMIN_IDS:
+    if user_id not in ADMINS:
         await m.reply("You don't have permission to use this command.")
         return
 
@@ -179,7 +179,7 @@ async def broadcast(m: UpdateNewMessage):
     user_id = m.sender_id
     text = m.pattern_match.group(1)
 
-    if user_id not in ADMIN_IDS:
+    if user_id not in ADMINS:
         await m.reply("You don't have permission to use this command.")
         return
 
@@ -194,7 +194,7 @@ async def broadcast(m: UpdateNewMessage):
 async def total_users(m: UpdateNewMessage):
     user_id = m.sender_id
 
-    if user_id not in ADMIN_IDS:
+    if user_id not in ADMINS:
         await m.reply("You don't have permission to use this command.")
         return
 
@@ -432,7 +432,7 @@ Share : @ultroid_official
         pattern="/broadcast (.+)",
         incoming=True,
         outgoing=False,
-        from_users=ADMIN_IDS,  # Specify the user IDs of admins who are allowed to use this command
+        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
     )
 )
 async def broadcast_message(m: UpdateNewMessage):
@@ -453,7 +453,7 @@ async def broadcast_message(m: UpdateNewMessage):
         pattern="/total_users",
         incoming=True,
         outgoing=False,
-        from_users=ADMIN_IDS,  # Specify the user IDs of admins who are allowed to use this command
+        from_users=ADMINS,  # Specify the user IDs of admins who are allowed to use this command
     )
 )
 async def total_users(m: UpdateNewMessage):
