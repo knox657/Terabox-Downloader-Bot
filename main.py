@@ -92,7 +92,8 @@ async def start(m: UpdateNewMessage):
         user_details = json.dumps({"username": m.sender.username, "first_name": m.sender.first_name, "last_name": m.sender.last_name})
         db.set(f"user:{user_id}", user_details)
 
-    verify_status = await get_verify_status(user_id)
+    #verify_status = await get_verify_status(user_id)
+    verify_status = await db_verify_status(user_id)
     if verify_status and verify_status['is_verified']:
         await m.reply("You are already verified. You can start using the bot.")
         return
